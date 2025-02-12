@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Check if script is triggered via bash not ash or else to work properly
+if [ -z "$BASH_VERSION" ]; then
+  echo -e "This script must be run with bash!" >&2
+  exit 1
+fi
+
 ############## Begin Function Section ##############
 
 check_online_status() {
@@ -756,7 +762,7 @@ umask 0022
 unset COMPOSE_COMMAND
 unset DOCKER_COMPOSE_VERSION
 
-for bin in curl docker git awk sha1sum grep cut; do
+for bin in curl docker git awk sha1sum grep cut readlink; do
   if [[ -z $(command -v ${bin}) ]]; then
   echo "Cannot find ${bin}, exiting..."
   exit 1;
@@ -866,6 +872,10 @@ while (($#)); do
 done
 
 [[ ! -f mailcow.conf ]] && { echo -e "\e[31mmailcow.conf is missing! Is mailcow installed?\e[0m"; exit 1;}
+[[ -L .env && "$(readlink .env)" == "mailcow.conf" ]] || { 
+  echo -e "\e[31m.env is not a symlink to mailcow.conf! Please make sure it a symlink by removing the existing file/link and by typing ln -s mailcow.conf .env to properly relink it.\e[0m"; 
+  exit 1;
+}
 
 chmod 600 mailcow.conf
 source mailcow.conf

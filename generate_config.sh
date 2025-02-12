@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Check if script is triggered via bash not ash or else to work properly
+if [ -z "$BASH_VERSION" ]; then
+  echo "This script must be run with bash!" >&2
+  exit 1
+fi
+
 set -o pipefail
 
 if [[ "$(uname -r)" =~ ^4\.15\.0-60 ]]; then
