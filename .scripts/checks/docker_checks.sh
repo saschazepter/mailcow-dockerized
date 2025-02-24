@@ -16,10 +16,10 @@ check_docker_version() {
 check_docker_compose() {
   if docker compose > /dev/null 2>&1; then
     echo "Docker Compose Plugin detected."
-    COMPOSE_VERSION=native
+    export DOCKER_COMPOSE_VERSION=native
   elif docker-compose > /dev/null 2>&1; then
     echo "Standalone Docker Compose detected."
-    COMPOSE_VERSION=standalone
+    export DOCKER_COMPOSE_VERSION=standalone
   else
     echo "Docker Compose not found. Please install it."
     exit 1
@@ -30,11 +30,13 @@ detect_docker_compose_command(){
 if ! [[ "${DOCKER_COMPOSE_VERSION}" =~ ^(native|standalone)$ ]]; then
   if docker compose > /dev/null 2>&1; then
       if docker compose version --short | grep -e "^2." -e "^v2." > /dev/null 2>&1; then
-        DOCKER_COMPOSE_VERSION=native
+        export DOCKER_COMPOSE_VERSION=native
         COMPOSE_COMMAND="docker compose"
         echo -e "\e[33mFound Docker Compose Plugin (native).\e[0m"
         echo -e "\e[33mSetting the DOCKER_COMPOSE_VERSION Variable to native\e[0m"
-        sed -i 's/^DOCKER_COMPOSE_VERSION=.*/DOCKER_COMPOSE_VERSION=native/' "$SCRIPT_DIR/mailcow.conf"
+        if [ -f $SCRIPT_DIR/mailcow.conf ]; then
+          sed -i 's/^DOCKER_COMPOSE_VERSION=.*/DOCKER_COMPOSE_VERSION=native/' "$SCRIPT_DIR/mailcow.conf"
+        fi
         sleep 2
         echo -e "\e[33mNotice: You'll have to update this Compose Version via your Package Manager manually!\e[0m"
       else
@@ -45,11 +47,13 @@ if ! [[ "${DOCKER_COMPOSE_VERSION}" =~ ^(native|standalone)$ ]]; then
   elif docker-compose > /dev/null 2>&1; then
     if ! [[ $(alias docker-compose 2> /dev/null) ]] ; then
       if docker-compose version --short | grep "^2." > /dev/null 2>&1; then
-        DOCKER_COMPOSE_VERSION=standalone
+        export DOCKER_COMPOSE_VERSION=standalone
         COMPOSE_COMMAND="docker-compose"
         echo -e "\e[33mFound Docker Compose Standalone.\e[0m"
         echo -e "\e[33mSetting the DOCKER_COMPOSE_VERSION Variable to standalone\e[0m"
-        sed -i 's/^DOCKER_COMPOSE_VERSION=.*/DOCKER_COMPOSE_VERSION=standalone/' "$SCRIPT_DIR/mailcow.conf"
+        if [ -f $SCRIPT_DIR/mailcow.conf ]; then
+          sed -i 's/^DOCKER_COMPOSE_VERSION=.*/DOCKER_COMPOSE_VERSION=standalone/' "$SCRIPT_DIR/mailcow.conf"
+        fi
         sleep 2
         echo -e "\e[33mNotice: For an automatic update of docker-compose please use the update_compose.sh scripts located at the helper-scripts folder.\e[0m"
       else

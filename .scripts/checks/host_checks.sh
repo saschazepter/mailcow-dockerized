@@ -29,7 +29,7 @@ kernel_checks(){
 }
 
 package_checks(){
-    for bin in curl docker git awk sha1sum grep cut jq; do
+    for bin in curl docker git awk sha1sum grep cut jq readlink ; do
         if [[ -z $(command -v ${bin}) ]]; then
         echo "Cannot find ${bin}, exiting..."
         exit 1;
