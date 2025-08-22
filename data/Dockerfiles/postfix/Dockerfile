@@ -1,9 +1,9 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
-LABEL maintainer = "The Infrastructure Company GmbH <info@servercow.de>"
+LABEL maintainer="The Infrastructure Company GmbH <info@servercow.de>"
 
 ARG DEBIAN_FRONTEND=noninteractive
-ENV LC_ALL C
+ENV LC_ALL=C
 
 RUN dpkg-divert --local --rename --add /sbin/initctl \
 	&& ln -sf /bin/true /sbin/initctl \
@@ -34,14 +34,12 @@ RUN groupadd -g 102 postfix \
 	syslog-ng-core \
 	syslog-ng-mod-redis \
   	tzdata \
-	python3-pip \
+	postfix-mta-sts-resolver \
+	python3-uvloop \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& touch /etc/default/locale \
   && printf '#!/bin/bash\n/usr/sbin/postconf -c /opt/postfix/conf "$@"' > /usr/local/sbin/postconf \
   && chmod +x /usr/local/sbin/postconf
-
-# New for MTA-STS Resolver Daemon
-RUN python3 -m pip install postfix-mta-sts-resolver[redis] uvloop --break-system-packages
 
 COPY supervisord.conf /etc/supervisor/supervisord.conf
 COPY syslog-ng.conf /etc/syslog-ng/syslog-ng.conf
