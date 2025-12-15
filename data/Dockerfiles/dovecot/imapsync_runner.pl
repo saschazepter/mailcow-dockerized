@@ -182,7 +182,7 @@ while ($row = $sth->fetchrow_arrayref()) {
     my $stdout = $run_imapsync->('utf8');
 
     # Check if authentication failed
-    my $auth_failed = ($stdout =~ /LOGIN failed|authentication failed|AUTHENTICATIONFAILED/i);
+    my $auth_failed = ($stdout =~ /\b(LOGIN failed|authentication failed|AUTHENTICATIONFAILED)\b/i);
     
     # If authentication failed with UTF-8, retry with Latin-1 encoding for legacy passwords
     if ($auth_failed) {
