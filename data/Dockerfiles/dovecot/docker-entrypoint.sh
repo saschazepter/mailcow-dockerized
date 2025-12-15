@@ -123,9 +123,9 @@ echo -n 'quota sieve acl zlib mail_crypt mail_crypt_acl fts fts_flatcurve notify
 fi
 
 # Create empty extra plugin files if they don't exist (can be populated via extra.conf or direct file)
-[[ ! -f /etc/dovecot/mail_plugins_extra ]] && touch /etc/dovecot/mail_plugins_extra
-[[ ! -f /etc/dovecot/mail_plugins_imap_extra ]] && touch /etc/dovecot/mail_plugins_imap_extra
-[[ ! -f /etc/dovecot/mail_plugins_lmtp_extra ]] && touch /etc/dovecot/mail_plugins_lmtp_extra
+for plugin_file in mail_plugins_extra mail_plugins_imap_extra mail_plugins_lmtp_extra; do
+  [[ ! -f /etc/dovecot/${plugin_file} ]] && touch /etc/dovecot/${plugin_file}
+done
 
 chmod 644 /etc/dovecot/mail_plugins /etc/dovecot/mail_plugins_imap /etc/dovecot/mail_plugins_lmtp /etc/dovecot/mail_plugins_extra /etc/dovecot/mail_plugins_imap_extra /etc/dovecot/mail_plugins_lmtp_extra /templates/quarantine.tpl
 
