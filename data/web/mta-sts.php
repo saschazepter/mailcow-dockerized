@@ -16,13 +16,19 @@ if ($domain === false || empty($domain)) {
 }
 
 // Check if domain is an alias domain and resolve to target domain
-$stmt = $pdo->prepare("SELECT `target_domain` FROM `alias_domain` WHERE `alias_domain` = :domain");
-$stmt->execute(array(':domain' => $domain));
-$alias_row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!empty($alias_row['target_domain'])) {
-  // This is an alias domain, use the target domain for MTA-STS lookup
-  $domain = $alias_row['target_domain'];
+try {
+  $stmt = $pdo->prepare("SELECT `target_domain` FROM `alias_domain` WHERE `alias_domain` = :domain");
+  $stmt->execute(array(':domain' => $domain));
+  $alias_row = $stmt->fetch(PDO::FETCH_ASSOC);
+  
+  if ($alias_row !== false && !empty($alias_row['target_domain'])) {
+    // This is an alias domain, use the target domain for MTA-STS lookup
+    $domain = $alias_row['target_domain'];
+  }
+} catch (PDOException $e) {
+  // On database error, return 404
+  http_response_code(404);
+  exit;
 }
 
 $mta_sts = mailbox('get', 'mta_sts', $domain);
