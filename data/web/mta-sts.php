@@ -9,6 +9,12 @@ if (!isset($_SERVER['HTTP_HOST']) || strpos($_SERVER['HTTP_HOST'], 'mta-sts.') !
 $host = preg_replace('/:[0-9]+$/', '', $_SERVER['HTTP_HOST']);
 $domain = idn_to_ascii(strtolower(str_replace('mta-sts.', '', $host)), 0, INTL_IDNA_VARIANT_UTS46);
 
+// Validate domain or return 404 on error
+if ($domain === false || empty($domain)) {
+  http_response_code(404);
+  exit;
+}
+
 // Check if domain is an alias domain and resolve to target domain
 $stmt = $pdo->prepare("SELECT `target_domain` FROM `alias_domain` WHERE `alias_domain` = :domain");
 $stmt->execute(array(':domain' => $domain));
