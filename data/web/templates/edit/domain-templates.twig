@@ -10,6 +10,7 @@
     <input type="hidden" value="0" name="gal">
     <input type="hidden" value="0" name="relay_all_recipients">
     <input type="hidden" value="0" name="relay_unknown_only">
+    <input type="hidden" value="0" name="mta_sts">
 
     {% if mailcow_cc_role == 'admin' %}
     <div class="row mb-4">
@@ -128,7 +129,6 @@
       <label class="control-label col-sm-2">{{ lang.edit.mta_sts }}</label>
       <div class="col-sm-10">
         <div class="form-check mb-3">
-          <input type="hidden" value="0" name="mta_sts">
           <label><input type="checkbox" class="form-check-input" value="1" name="mta_sts"{% if template.attributes.mta_sts == '1' %} checked{% endif %}> {{ lang.edit.mta_sts_enable }}</label>
           <p><small class="text-muted">{{ lang.edit.mta_sts_template_info|raw }}</small></p>
         </div>
