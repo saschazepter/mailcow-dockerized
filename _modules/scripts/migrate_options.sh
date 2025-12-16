@@ -14,6 +14,7 @@ migrate_config_options() {
     FLATCURVE_EXPERIMENTAL
     DISABLE_IPv6
     ACME_CONTACT
+    SOGO_URL_ENCRYPTION_KEY
   )
 
   for key in "${KEYS[@]}"; do
@@ -61,6 +62,12 @@ migrate_config_options() {
           sed -i '/^# https:\/\/docs.mailcow.email\/troubleshooting\/debug-reset_tls\//d' mailcow.conf
           sed -i '/^ACME_CONTACT=.*/d' mailcow.conf
           sed -i '/^#ACME_CONTACT=.*/d' mailcow.conf
+          ;;
+        SOGO_URL_ENCRYPTION_KEY)
+          echo "Removing ${key} in mailcow.conf (moved to sogo.conf)"
+          sed -i '/^# SOGo URL encryption key/d' mailcow.conf
+          sed -i '/^# This key is used to encrypt email addresses within SOGo URLs/d' mailcow.conf
+          sed -i '/^SOGO_URL_ENCRYPTION_KEY=.*/d' mailcow.conf
           ;;
       esac
     fi

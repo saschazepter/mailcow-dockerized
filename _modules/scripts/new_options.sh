@@ -43,7 +43,6 @@ adapt_new_options() {
   "ALLOW_ADMIN_EMAIL_LOGIN"
   "SKIP_HTTP_VERIFICATION"
   "SOGO_EXPIRE_SESSION"
-  "SOGO_URL_ENCRYPTION_KEY"
   "REDIS_PORT"
   "REDISPASS"
   "DOVECOT_MASTER_USER"
@@ -286,11 +285,6 @@ adapt_new_options() {
             ;;
         REDISPASS)
             echo "REDISPASS=$(LC_ALL=C </dev/urandom tr -dc A-Za-z0-9 2>/dev/null | head -c 28)" >> mailcow.conf
-            ;;
-        SOGO_URL_ENCRYPTION_KEY)
-            echo '# SOGo URL encryption key (exactly 16 characters, limited to A–Z, a–z, 0–9)' >> mailcow.conf
-            echo '# This key is used to encrypt email addresses within SOGo URLs' >> mailcow.conf
-            echo "SOGO_URL_ENCRYPTION_KEY=$(LC_ALL=C </dev/urandom tr -dc A-Za-z0-9 2>/dev/null | head -c 16)" >> mailcow.conf
             ;;
         *)
             echo "${option}=" >> mailcow.conf
