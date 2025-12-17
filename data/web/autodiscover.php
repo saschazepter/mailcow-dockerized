@@ -94,7 +94,7 @@ if(!$data) {
   list($usec, $sec) = explode(' ', microtime());
 ?>
   <Response>
-    <Error Time="<?=date('H:i:s', $sec) . substr($usec, 0, strlen($usec) - 2);?>" Id="2477272013">
+    <Error Time="<?=date('H:i:s', $sec) . substr($usec, 0, strlen($usec) - 2);?>" Id="<?=rand(1000000000, 9999999999);?>">
       <ErrorCode>600</ErrorCode>
       <Message>Invalid Request</Message>
       <DebugData />
@@ -128,7 +128,7 @@ try {
   list($usec, $sec) = explode(' ', microtime());
 ?>
   <Response>
-    <Error Time="<?=date('H:i:s', $sec) . substr($usec, 0, strlen($usec) - 2);?>" Id="2477272013">
+    <Error Time="<?=date('H:i:s', $sec) . substr($usec, 0, strlen($usec) - 2);?>" Id="<?=rand(1000000000, 9999999999);?>">
       <ErrorCode>600</ErrorCode>
       <Message>Invalid Request</Message>
       <DebugData />
@@ -139,9 +139,9 @@ try {
   exit(0);
 }
 
-$username = trim($email);
+$username = trim((string)$email);
 try {
-  $stmt = $pdo->prepare("SELECT `name`, `active` FROM `mailbox` 
+  $stmt = $pdo->prepare("SELECT `mailbox`.`name`, `mailbox`.`active` FROM `mailbox` 
     INNER JOIN `domain` ON `mailbox`.`domain` = `domain`.`domain`
     WHERE `mailbox`.`username` = :username 
     AND `mailbox`.`active` = '1'
@@ -150,7 +150,19 @@ try {
   $MailboxData = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 catch(PDOException $e) {
-  die("Failed to determine name from SQL");
+  // Database error - return error response with complete XML
+  list($usec, $sec) = explode(' ', microtime());
+?>
+  <Response>
+    <Error Time="<?=date('H:i:s', $sec) . substr($usec, 0, strlen($usec) - 2);?>" Id="<?=rand(1000000000, 9999999999);?>">
+      <ErrorCode>500</ErrorCode>
+      <Message>Database Error</Message>
+      <DebugData />
+    </Error>
+  </Response>
+</Autodiscover>
+<?php
+  exit(0);
 }
 
 // Mailbox not found or not active - return error
@@ -174,7 +186,7 @@ if (empty($MailboxData)) {
   list($usec, $sec) = explode(' ', microtime());
 ?>
   <Response>
-    <Error Time="<?=date('H:i:s', $sec) . substr($usec, 0, strlen($usec) - 2);?>" Id="2477272014">
+    <Error Time="<?=date('H:i:s', $sec) . substr($usec, 0, strlen($usec) - 2);?>" Id="<?=rand(1000000000, 9999999999);?>">
       <ErrorCode>600</ErrorCode>
       <Message>Mailbox not found</Message>
       <DebugData />
