@@ -165,7 +165,7 @@ catch(PDOException $e) {
   exit(0);
 }
 
-// Mailbox not found or not active - return error
+// Mailbox not found or not active - return generic error to prevent user enumeration
 if (empty($MailboxData)) {
   try {
     $json = json_encode(
@@ -188,7 +188,7 @@ if (empty($MailboxData)) {
   <Response>
     <Error Time="<?=date('H:i:s', $sec) . substr($usec, 0, strlen($usec) - 2);?>" Id="<?=rand(1000000000, 9999999999);?>">
       <ErrorCode>600</ErrorCode>
-      <Message>Mailbox not found</Message>
+      <Message>Invalid Request</Message>
       <DebugData />
     </Error>
   </Response>
